@@ -3,7 +3,7 @@ require('dotenv').config();
 var inquirer = require('inquirer');
 const cTable = require('console.table');
 const express = require('express');
-const db = require('./db/connection');
+const db = require('./config/connection');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
