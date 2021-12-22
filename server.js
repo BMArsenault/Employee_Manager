@@ -33,7 +33,7 @@ function promptStart() {
               viewEmployees();
               break;
             case "Add A Department":
-                addDeparment();
+                addDepartment();
                 break;
             case "Add A Role":
                 addRole();
@@ -48,11 +48,85 @@ function promptStart() {
     })
 }
 
+//READ FUNCTIONS TO VIEW DEPARMENTS/ROLES/EMPLOYEES
 
 
 
 
+// CREATE FUNCTION TO ADD DEPARMENT/ROLE/EMPLOYEE
+function addDepartment() {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'departmentName',
+            message: 'What is the name of the department?',
+        },
+ // create new engineer from answers and push to team array
+    ]).then(answers => {
+        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+        // team.push(engineer);
+        viewDepartment();
+    })
+};
 
+//  Add Role
+function addRole() {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleName',
+            message: 'What is the name of the role?',
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'What is the salary of this role?',
+        },
+        {
+            type: 'list',
+            name: 'deptID',
+            message: 'What is the deparment ID number?',
+            choices: ['1', '2', '3', '4']
+        },
+ // create new engineer from answers and push to team array
+    ]).then(answers => {
+        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+        // team.push(engineer);
+        viewRoles();
+    })
+};
+
+function addEmployee() {
+    return inquirer.prompt([
+        {
+            type: 'input',
+            name: 'firstName',
+            message: 'What is the name of the department?',
+        },
+        {
+            type: 'input',
+            name: 'lastname',
+            message: 'What is the name of the department?',
+        },
+        {
+            type: 'list',
+            name: 'roleID',
+            message: 'What role do this employee belong to?',
+            choices: ["1", "2", "3", "4"]
+        },
+        {
+            type: 'list',
+            name: 'managerID',
+            message: 'What manager do this person work under?',
+            choices: ["1", "2", "3", "4"]
+        },
+ // create new engineer from answers and push to team array
+    ]).then(answers => {
+        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
+        // team.push(engineer);
+        viewEmployees();
+    })
+};
 
 
   // Default response for any other request (Not Found)
