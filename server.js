@@ -48,6 +48,15 @@ function promptStart() {
     })
 }
 
+// Start server after DB connection
+db.connect(err => {
+    if (err) throw err;
+    console.log('Database connected.');
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
+})
+
 //READ FUNCTIONS TO VIEW DEPARMENTS/ROLES/EMPLOYEES
 function viewDepartments() {
     db.query(`SELECT departments.id AS "Dept. ID", dept_name AS "Department" FROM departments`, (err, res) => {
@@ -55,21 +64,34 @@ function viewDepartments() {
         console.table("All Departments:", res);
         promptStart();
     });
-}
+};
 
-// CREATE FUNCTION TO ADD DEPARMENT/ROLE/EMPLOYEE
+function viewRoles() {
+    db.query(`SELECT roles.id AS "Role ID", roles.title AS "Title", roles.salary AS "Salary", roles.department_id AS "Dept ID" FROM roles`, (err, res) => {
+        if (err) res.status(500).json({ error: err.message });
+        console.table("All Roles:", res);
+        promptStart();
+    });
+};
+
+function viewEmployees() {
+    db.query(`SELECT employees.id AS "Emp. ID", employees.first_name AS "First Name", employees.last_name AS "Last Name", employees.role_id AS "Role ID", employees.manager_id AS "Manager ID" FROM employees`, (err, res) => {
+        if (err) res.status(500).json({ error: err.message });
+        console.table("All Employees:", res);
+        promptStart();
+    });
+};
+
+// // CREATE FUNCTION TO ADD DEPARMENT/ROLE/EMPLOYEE
 function addDepartment() {
-    return inquirer.prompt([
+    inquirer.prompt([
         {
             type: 'input',
             name: 'departmentName',
             message: 'What is the name of the department?',
         },
- // create new engineer from answers and push to team array
+ // create a new department
     ]).then(answer => {
-        // const sql = `INSERT INTO departments (dept_name) 
-        // VALUES (?)`;
-        // const params = [answer.dept_name];
         db.query(`INSERT INTO departments SET ?`,
             {
                 dept_name: answer.departmentName,
@@ -84,7 +106,7 @@ function addDepartment() {
 
 //  Add Role
 function addRole() {
-    return inquirer.prompt([
+    inquirer.prompt([
         {
             type: 'input',
             name: 'roleName',
@@ -102,15 +124,23 @@ function addRole() {
             choices: ['1', '2', '3', '4']
         },
  // create new engineer from answers and push to team array
-    ]).then(answers => {
-        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
-        // team.push(engineer);
-        viewRoles();
-    })
+    ]).then(answer => {
+        db.query(`INSERT INTO roles SET ?`,
+            {
+                title: answer.roleName,
+                salary: answer.salary,
+                department_id: answer.deptID,
+            },
+        (err, res) => {
+            if (err) res.status(400).json({ error: err.message });
+            console.log(`${res.affectedRows} department has been added!`);
+            viewRoles();
+        });
+    });
 };
 
 function addEmployee() {
-    return inquirer.prompt([
+    inquirer.prompt([
         {
             type: 'input',
             name: 'firstName',
@@ -118,7 +148,7 @@ function addEmployee() {
         },
         {
             type: 'input',
-            name: 'lastname',
+            name: 'lastName',
             message: 'What is their last name?',
         },
         {
@@ -134,25 +164,27 @@ function addEmployee() {
             choices: ["1", "2", "3", "4"]
         },
  // create new engineer from answers and push to team array
-    ]).then(answers => {
-        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
-        // team.push(engineer);
-        viewEmployees();
-    })
+    ]).then(answer => {
+        db.query(`INSERT INTO employees SET ?`,
+            {
+                first_name: answer.firstName,
+                last_name: answer.lastName,
+                role_id: answer.roleID,
+                manager_id: answer.managerID
+            },
+        (err, res) => {
+            if (err) res.status(400).json({ error: err.message });
+            console.log(`${res.affectedRows} department has been added!`);
+            viewEmployees();
+        });
+    });
 };
-
-promptStart();
 
   // Default response for any other request (Not Found)
   app.use((req, res) => {
     res.status(404).end();
   });
 
-  // Start server after DB connection
-db.connect(err => {
-  if (err) throw err;
-  console.log('Database connected.');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-});
+
+
+promptStart();
