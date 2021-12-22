@@ -101,18 +101,18 @@ function addEmployee() {
         {
             type: 'input',
             name: 'firstName',
-            message: 'What is the name of the department?',
+            message: 'What is the first name of this employee?',
         },
         {
             type: 'input',
             name: 'lastname',
-            message: 'What is the name of the department?',
+            message: 'What is their last name?',
         },
         {
             type: 'list',
             name: 'roleID',
             message: 'What role do this employee belong to?',
-            choices: ["1", "2", "3", "4"]
+            choices: ["1", "2", "3", "4", "5", "6"]
         },
         {
             type: 'list',
@@ -133,11 +133,6 @@ function addEmployee() {
   app.use((req, res) => {
     res.status(404).end();
   });
-
-
-
-
-
 
   // Start server after DB connection
 db.connect(err => {
