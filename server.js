@@ -30,8 +30,8 @@ function promptStart() {
                 viewRoles();
                 break;
             case "View All Employees":
-              viewEmployees();
-              break;
+                viewEmployees();
+                break;
             case "Add A Department":
                 addDepartment();
                 break;
@@ -39,10 +39,10 @@ function promptStart() {
                 addRole();
                 break;
             case "Add An Employee":
-                addEngineer();
+                addEmplyee();
                 break;
             case "Update An Employee":
-                addEmployee();
+                updateEmployee();
                 break;
         }
     })
