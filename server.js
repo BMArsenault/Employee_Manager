@@ -18,12 +18,12 @@ function promptStart() {
         {
             type: 'list',
             name: 'options',
-            message: 'Would you like to add another employee?',
+            message: 'What would you like to do?',
             choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
         switch (answer.options) {
-            case "View All Department":
+            case "View All Departments":
                 viewDepartments();
                 break;
             case "View All Roles":
@@ -39,7 +39,7 @@ function promptStart() {
                 addRole();
                 break;
             case "Add An Employee":
-                addEmplyee();
+                addEmployee();
                 break;
             case "Update An Employee":
                 updateEmployee();
@@ -49,9 +49,13 @@ function promptStart() {
 }
 
 //READ FUNCTIONS TO VIEW DEPARMENTS/ROLES/EMPLOYEES
-
-
-
+function viewDepartments() {
+    db.query(`SELECT departments.id AS "Dept. ID", dept_name AS "Department" FROM departments`, (err, res) => {
+        if (err) res.status(500).json({ error: err.message });
+        console.table("All Departments:", res);
+        promptStart();
+    });
+}
 
 // CREATE FUNCTION TO ADD DEPARMENT/ROLE/EMPLOYEE
 function addDepartment() {
@@ -62,11 +66,20 @@ function addDepartment() {
             message: 'What is the name of the department?',
         },
  // create new engineer from answers and push to team array
-    ]).then(answers => {
-        // const engineer = new Engineer(answers.engineerName, answers.engineerId, answers.engineerEmail, answers.engineerGithub);
-        // team.push(engineer);
-        viewDepartment();
-    })
+    ]).then(answer => {
+        // const sql = `INSERT INTO departments (dept_name) 
+        // VALUES (?)`;
+        // const params = [answer.dept_name];
+        db.query(`INSERT INTO departments SET ?`,
+            {
+                dept_name: answer.departmentName,
+            },
+        (err, res) => {
+            if (err) res.status(400).json({ error: err.message });
+            console.log(`${res.affectedRows} department has been added!`);
+            viewDepartments();
+        });
+    });
 };
 
 //  Add Role
@@ -128,6 +141,7 @@ function addEmployee() {
     })
 };
 
+promptStart();
 
   // Default response for any other request (Not Found)
   app.use((req, res) => {
