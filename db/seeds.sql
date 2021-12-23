@@ -1,7 +1,8 @@
+USE employees;
 INSERT INTO departments (dept_name)
 VALUES
   ('Administration'),
-  ('Marketing'),
+  ('Finance'),
   ('Communications'),
   ('Warehouse');
 INSERT INTO roles (title, salary, department_id)

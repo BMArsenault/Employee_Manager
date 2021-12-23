@@ -22,6 +22,7 @@ function promptStart() {
             choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
+        console.log(answer);
         switch (answer.options) {
             case "View All Departments":
                 viewDepartments();
@@ -57,7 +58,7 @@ db.connect(err => {
     })
 })
 
-//READ FUNCTIONS TO VIEW DEPARMENTS/ROLES/EMPLOYEES
+//READ FUNCTIONS TO VIEW DEPARTMENTS/ROLES/EMPLOYEES
 function viewDepartments() {
     db.query(`SELECT departments.id AS "Dept. ID", dept_name AS "Department" FROM departments`, (err, res) => {
         if (err) res.status(500).json({ error: err.message });
@@ -123,7 +124,7 @@ function addRole() {
             message: 'What is the deparment ID number?',
             choices: ['1', '2', '3', '4']
         },
- // create new engineer from answers and push to team array
+ // create new role
     ]).then(answer => {
         db.query(`INSERT INTO roles SET ?`,
             {
@@ -138,7 +139,7 @@ function addRole() {
         });
     });
 };
-
+// Add employee
 function addEmployee() {
     inquirer.prompt([
         {
@@ -163,7 +164,7 @@ function addEmployee() {
             message: 'What manager do this person work under?',
             choices: ["1", "2", "3", "4"]
         },
- // create new engineer from answers and push to team array
+ // create new employee
     ]).then(answer => {
         db.query(`INSERT INTO employees SET ?`,
             {
