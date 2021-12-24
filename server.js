@@ -19,7 +19,7 @@ function promptStart() {
             type: 'list',
             name: 'options',
             message: 'What would you like to do?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department', 'Delete a Role',],
+            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department', 'Delete a Role', 'Delete an Employee',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
         console.log(answer);
@@ -50,6 +50,9 @@ function promptStart() {
                 break;
             case "Delete a Role":
                 deleteRole();
+                break;
+            case "Delete an Employee":
+                deleteEmployee();
                 break;
         }
     })
@@ -246,56 +249,66 @@ function deleteDepartment() {
             {
                 id: answer.deleteDepartment,
             },
-        (err, res) => {
-            if (err) res.status(400).json({ error: err.message });
-            console.log(`${res.affectedRows} department has been deleted!`);
-            viewDepartments();
-        })
+            // delete department and show all departments for proof
+            (err, res) => {
+                if (err) {
+                    throw err
+            } else {
+                console.log(`${res.affectedRows} department has been deleted!`);
+                viewDepartments();
+            }
+            });
     }) 
 };
 
-// function deleteRole() {
-//     inquirer.prompt([
-//         {
-//             type: 'input',
-//             name: 'deleteRole',
-//             message: 'What is the ID number of the role you would like to delete?',
-//         },
-//  // create a new department
-//     ])
-//     .then((answer) => {
-//         db.query(`DELETE FROM roles
-//                 WHERE id = ?`,
-//             {
-//                 id = answer.deleteRole,
-//             },
-//         (err, res) => {
-//             if (err) res.status(400).json({ error: err.message });
-//             console.log(`${res.affectedRows} role has been deleted!`);
-//             viewRoles();
-//         })
-//     }) 
-// };
+function deleteRole() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deleteRole',
+            message: 'What is the ID number of the role you would like to delete?',
+        },
+ // delete a role
+    ])
+    .then((answer) => {
+        db.query(`DELETE FROM roles
+                WHERE ?`,
+            {
+                id: answer.deleteRole,
+            },
+            (err, res) => {
+                if (err) {
+                    throw err
+            } else {
+                console.log(`${res.affectedRows} role has been deleted!`);
+                viewRoles();
+            }
+            });
+    }) 
+};
 
-// function deleteDepartment() {
-//     inquirer.prompt([
-//         {
-//             type: 'input',
-//             name: 'deleteDepartment',
-//             message: 'What is the ID number of the department you would like to delete?',
-//         },
-//  // create a new department
-//     ])
-//     .then((answer) => {
-//         db.query(`DELETE FROM departments
-//                 WHERE id = ?`,
-//             {
-//                 id = answer.deleteDepartment,
-//             },
-//         (err, res) => {
-//             if (err) res.status(400).json({ error: err.message });
-//             console.log(`${res.affectedRows} department has been deleted!`);
-//             viewDepartments();
-//         })
-//     }) 
-// };
+function deleteEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deleteEmp',
+            message: 'What is the ID number of the Employee you would like to terminate?',
+        },
+ // delete a role
+    ])
+    .then((answer) => {
+        db.query(`DELETE FROM employees
+                WHERE ?`,
+            {
+                id: answer.deleteEmp,
+            },
+            (err, res) => {
+                if (err) {
+                    throw err
+            } else {
+                console.log(`${res.affectedRows} employee has been let go!`);
+                viewEmployees();
+            }
+            });
+    }) 
+};

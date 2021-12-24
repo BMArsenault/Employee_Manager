@@ -11,7 +11,7 @@ VALUES
   ('Cashier', 24000, 1),
   ('Front Desk', 35000, 1),
   ('Design', 40000, 3),
-  ('District Manager', 80000, 4)
+  ('District Manager', 80000, 4),
   ('Sales', 56000, 3),
   ('Accounting', 60000, 2);
 
