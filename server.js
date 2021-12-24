@@ -19,7 +19,7 @@ function promptStart() {
             type: 'list',
             name: 'options',
             message: 'What would you like to do?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department',],
+            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department', 'Delete a Role',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
         console.log(answer);
@@ -47,6 +47,9 @@ function promptStart() {
                 break;
             case "Delete a Department":
                 deleteDepartment();
+                break;
+            case "Delete a Role":
+                deleteRole();
                 break;
         }
     })
@@ -228,28 +231,28 @@ function updateEmployee() {
     });
 }
 
-// function deleteDepartment() {
-//     inquirer.prompt([
-//         {
-//             type: 'input',
-//             name: 'deleteDepartment',
-//             message: 'What is the ID number of the department you would like to delete?',
-//         },
-//  // delete a department
-//     ])
-//     .then((answer) => {
-//         db.query(`DELETE FROM departments
-//                 WHERE id = ?`,
-//             {
-//                 id = answer.deleteDepartment,
-//             },
-//         (err, res) => {
-//             if (err) res.status(400).json({ error: err.message });
-//             console.log(`${res.affectedRows} department has been deleted!`);
-//             viewDepartments();
-//         })
-//     }) 
-// };
+function deleteDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'deleteDepartment',
+            message: 'What is the ID number of the department you would like to delete?',
+        },
+ // delete a department
+    ])
+    .then((answer) => {
+        db.query(`DELETE FROM departments
+                WHERE ?`,
+            {
+                id: answer.deleteDepartment,
+            },
+        (err, res) => {
+            if (err) res.status(400).json({ error: err.message });
+            console.log(`${res.affectedRows} department has been deleted!`);
+            viewDepartments();
+        })
+    }) 
+};
 
 // function deleteRole() {
 //     inquirer.prompt([
