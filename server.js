@@ -19,7 +19,7 @@ function promptStart() {
             type: 'list',
             name: 'options',
             message: 'What would you like to do?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee',],
+            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
         console.log(answer);
@@ -44,6 +44,9 @@ function promptStart() {
                 break;
             case "Update An Employee":
                 updateEmployee();
+                break;
+            case "Delete a Department":
+                deleteDepartment();
                 break;
         }
     })
@@ -100,13 +103,15 @@ function addDepartment() {
                 dept_name: answer.departmentName,
             },
         (err, res) => {
-            if (err) res.status(400).json({ error: err.message });
-            console.log(`${res.affectedRows} department has been added!`);
-            viewDepartments();
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                console.log(`${res.affectedRows} department has been added!`);
+                viewDepartments();
+            }
         });
     });
 };
-
 //  Add Role
 function addRole() {
     inquirer.prompt([
@@ -135,9 +140,12 @@ function addRole() {
                 department_id: answer.deptID,
             },
         (err, res) => {
-            if (err) res.status(400).json({ error: err.message });
-            console.log(`${res.affectedRows} department has been added!`);
-            viewRoles();
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                console.log(`${res.affectedRows} role has been added!`);
+                viewRoles();
+            }
         });
     });
 };
@@ -176,14 +184,115 @@ function addEmployee() {
                 manager_id: answer.managerID
             },
         (err, res) => {
-            if (err) res.status(400).json({ error: err.message });
-            console.log(`${res.affectedRows} department has been added!`);
-            viewEmployees();
+            if (err) {
+                res.status(400).json({ error: err.message });
+            } else {
+                console.log(`${res.affectedRows} employee has been added!`);
+                viewEmployees();
+            }
         });
     });
 };
 
-// Default response for any other request (Not Found)
-//   app.use((req, res) => {
-//     res.status(404).end();
-//   });
+function updateEmployee() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeID',
+            message: 'Please enter ID of the employee you would like to update:',
+        },
+        {
+            type: 'list',
+            name: 'roleID',
+            message: 'What is the new role for this employee?',
+            choices: ["1", "2", "3", "4", "5", "6"],
+        },
+    // update employee info
+    ]).then((answer) => {
+        console.log(answer);
+        db.query(`UPDATE employees SET ? WHERE ?`,
+            [{
+                role_id: answer.roleID,
+            },
+            {
+                id: answer.employeeID,
+            }],
+        (err, res) => {
+            if (err) {
+                throw err
+        } else {
+            console.log(`${res.affectedRows} role has been updated!`);
+            viewEmployees();
+        }
+        });
+    });
+}
+
+// function deleteDepartment() {
+//     inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'deleteDepartment',
+//             message: 'What is the ID number of the department you would like to delete?',
+//         },
+//  // delete a department
+//     ])
+//     .then((answer) => {
+//         db.query(`DELETE FROM departments
+//                 WHERE id = ?`,
+//             {
+//                 id = answer.deleteDepartment,
+//             },
+//         (err, res) => {
+//             if (err) res.status(400).json({ error: err.message });
+//             console.log(`${res.affectedRows} department has been deleted!`);
+//             viewDepartments();
+//         })
+//     }) 
+// };
+
+// function deleteRole() {
+//     inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'deleteRole',
+//             message: 'What is the ID number of the role you would like to delete?',
+//         },
+//  // create a new department
+//     ])
+//     .then((answer) => {
+//         db.query(`DELETE FROM roles
+//                 WHERE id = ?`,
+//             {
+//                 id = answer.deleteRole,
+//             },
+//         (err, res) => {
+//             if (err) res.status(400).json({ error: err.message });
+//             console.log(`${res.affectedRows} role has been deleted!`);
+//             viewRoles();
+//         })
+//     }) 
+// };
+
+// function deleteDepartment() {
+//     inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'deleteDepartment',
+//             message: 'What is the ID number of the department you would like to delete?',
+//         },
+//  // create a new department
+//     ])
+//     .then((answer) => {
+//         db.query(`DELETE FROM departments
+//                 WHERE id = ?`,
+//             {
+//                 id = answer.deleteDepartment,
+//             },
+//         (err, res) => {
+//             if (err) res.status(400).json({ error: err.message });
+//             console.log(`${res.affectedRows} department has been deleted!`);
+//             viewDepartments();
+//         })
+//     }) 
+// };
