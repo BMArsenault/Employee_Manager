@@ -19,10 +19,9 @@ function promptStart() {
             type: 'list',
             name: 'options',
             message: 'What would you like to do?',
-            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department', 'Delete a Role', 'Delete an Employee',],
+            choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add A Department', 'Add A Role', 'Add An Employee', 'Update An Employee', 'Delete a Department', 'Delete a Role', 'Delete an Employee', 'Update Employee Manager', 'View Budget',],
         }, // based off choices, run func to view or add
     ]).then(answer => {
-        console.log(answer);
         switch (answer.options) {
             case "View All Departments":
                 viewDepartments();
@@ -45,6 +44,9 @@ function promptStart() {
             case "Update An Employee":
                 updateEmployee();
                 break;
+            case "Update Employee Manager":
+                updateEmployeeManager();
+                break;
             case "Delete a Department":
                 deleteDepartment();
                 break;
@@ -53,6 +55,9 @@ function promptStart() {
                 break;
             case "Delete an Employee":
                 deleteEmployee();
+                break;
+            case "View Budget":
+                viewBudget();
                 break;
         }
     })
@@ -71,7 +76,7 @@ db.connect(err => {
 
 //READ FUNCTIONS TO VIEW DEPARTMENTS/ROLES/EMPLOYEES
 function viewDepartments() {
-    db.query(`SELECT departments.id AS "Dept. ID", dept_name AS "Department" FROM departments`, (err, res) => {
+    db.query(`SELECT id AS "Dept. ID", dept_name AS "Department" FROM departments`, (err, res) => {
         if (err) res.status(500).json({ error: err.message });
         console.table("All Departments:", res);
         promptStart();
@@ -79,7 +84,7 @@ function viewDepartments() {
 };
 
 function viewRoles() {
-    db.query(`SELECT roles.id AS "Role ID", roles.title AS "Title", roles.salary AS "Salary", roles.department_id AS "Dept ID" FROM roles`, (err, res) => {
+    db.query(`SELECT id AS "Role ID", title AS "Title", salary AS "Salary", department_id AS "Dept ID" FROM roles`, (err, res) => {
         if (err) res.status(500).json({ error: err.message });
         console.table("All Roles:", res);
         promptStart();
@@ -87,13 +92,25 @@ function viewRoles() {
 };
 
 function viewEmployees() {
-    db.query(`SELECT employees.id AS "Emp. ID", employees.first_name AS "First Name", employees.last_name AS "Last Name", employees.role_id AS "Role ID", employees.manager_id AS "Manager ID" FROM employees`, (err, res) => {
+    db.query(`SELECT id AS "Emp. ID", first_name AS "First Name", last_name AS "Last Name", role_id AS "Role ID", manager_id AS "Manager ID" FROM employees`, (err, res) => {
         if (err) res.status(500).json({ error: err.message });
         console.table("All Employees:", res);
         promptStart();
     });
 };
 
+function viewBudget() {
+    db.query(`SELECT departments.dept_name AS 'Department', SUM(roles.salary) AS 'Budget Per Dept'
+    FROM employees
+    LEFT JOIN roles on employees.role_id = roles.id
+    LEFT JOIN departments on roles.department_id = departments.id
+    GROUP BY departments.dept_name;`, 
+    (err, res) => {
+        if (err) res.status(500).json({ error: err.message });
+        console.table("Company Budget:", res);
+        promptStart();
+    });
+};
 // // CREATE FUNCTION TO ADD DEPARMENT/ROLE/EMPLOYEE
 function addDepartment() {
     inquirer.prompt([
@@ -120,40 +137,48 @@ function addDepartment() {
 };
 //  Add Role
 function addRole() {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'roleName',
-            message: 'What is the name of the role?',
-        },
-        {
-            type: 'input',
-            name: 'salary',
-            message: 'What is the salary of this role?',
-        },
-        {
-            type: 'list',
-            name: 'deptID',
-            message: 'What is the deparment ID number?',
-            choices: ['1', '2', '3', '4']
-        },
- // create new role
-    ]).then(answer => {
-        db.query(`INSERT INTO roles SET ?`,
+    db.promise().query(`SELECT id, dept_name AS 'name' FROM departments`).then(data => {
+        inquirer.prompt([
             {
-                title: answer.roleName,
-                salary: answer.salary,
-                department_id: answer.deptID,
+                type: 'input',
+                name: 'roleName',
+                message: 'What is the name of the role?',
             },
-        (err, res) => {
-            if (err) {
-                res.status(400).json({ error: err.message });
-            } else {
-                console.log(`${res.affectedRows} role has been added!`);
-                viewRoles();
-            }
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of this role?',
+            },
+            {
+                type: 'list',
+                name: 'deptID',
+                message: 'What is the deparment ID number?',
+                choices: data[0]
+            },
+     // create new role
+        ]).then(answer => {
+            let deptID = data[0].find(dept => {
+                if(dept.name === answer.deptID) {
+                    return dept;
+                }
+            }).id;
+            db.query(`INSERT INTO roles SET ?`,
+                {
+                    title: answer.roleName,
+                    salary: answer.salary,
+                    department_id: deptID,
+                },
+            (err, res) => {
+                if (err) {
+                    res.status(400).json({ error: err.message });
+                } else {
+                    console.log(`${res.affectedRows} role has been added!`);
+                    viewRoles();
+                }
+            });
         });
-    });
+    })
+   
 };
 // Add employee
 function addEmployee() {
@@ -312,3 +337,37 @@ function deleteEmployee() {
             });
     }) 
 };
+
+function updateEmployeeManager() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeID',
+            message: 'Please enter ID of the employee you would like to update:',
+        },
+        {
+            type: 'list',
+            name: 'newManagerID',
+            message: 'What is the ID of the new manager you would like to assign?',
+            choices: ["1", "2", "3", "4",],
+        },
+    // update employee info
+    ]).then((answer) => {
+        console.log(answer);
+        db.query(`UPDATE employees SET ? WHERE ?`,
+            [{
+                manager_id: answer.newManagerID,
+            },
+            {
+                id: answer.employeeID,
+            }],
+        (err, res) => {
+            if (err) {
+                throw err
+        } else {
+            console.log(`${res.affectedRows} manager has been updated!`);
+            viewEmployees();
+        }
+        });
+    });
+}

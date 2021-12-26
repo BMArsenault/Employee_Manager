@@ -25,6 +25,6 @@ VALUES
   ('Mercedes', 'Lewis', 6, 2),
   ('Aaron', 'Rodgers', 1, 4),
   ('Eric', 'Smith', 2, 1),
-  ('Jordan', 'Burns', 4, 2),
+  ('Jordan', 'Burns', 4, NULL),
   ('Tammy', 'Peterson', 5, 1),
   ('Aaron', 'Donald', 6, 3);
