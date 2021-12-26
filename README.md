@@ -50,4 +50,4 @@ Please see following link for a tutorial on how to add/delete/update using Emplo
 * <a href="https://w3schools.com" target="_blank">Online Web Tutorials</a>
 * <a href="https://google.com" target="_blank">Google</a>
 * <a href="https://npmjs.com" target="_blank">NPM</a>
-* <a href="https://github.com/BMArsenault/Employee_Manager" target="_blank>Github</a>
+* <a href="https://github.com/BMArsenault/Employee_Manager" target="_blank">Github</a>
