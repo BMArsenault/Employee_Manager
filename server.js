@@ -277,7 +277,7 @@ function deleteDepartment() {
             // delete department and show all departments for proof
             (err, res) => {
                 if (err) {
-                    throw err
+                    res.status(400).json({ error: err.message });
             } else {
                 console.log(`${res.affectedRows} department has been deleted!`);
                 viewDepartments();
@@ -303,7 +303,7 @@ function deleteRole() {
             },
             (err, res) => {
                 if (err) {
-                    throw err
+                    res.status(400).json({ error: err.message });
             } else {
                 console.log(`${res.affectedRows} role has been deleted!`);
                 viewRoles();
@@ -329,7 +329,7 @@ function deleteEmployee() {
             },
             (err, res) => {
                 if (err) {
-                    throw err
+                    res.status(400).json({ error: err.message });
             } else {
                 console.log(`${res.affectedRows} employee has been let go!`);
                 viewEmployees();
@@ -363,7 +363,7 @@ function updateEmployeeManager() {
             }],
         (err, res) => {
             if (err) {
-                throw err
+                res.status(400).json({ error: err.message });
         } else {
             console.log(`${res.affectedRows} manager has been updated!`);
             viewEmployees();
