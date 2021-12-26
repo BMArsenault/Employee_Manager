@@ -43,7 +43,7 @@ Following the instruction above, select add/delete department, add/delete role o
 
 * Update employees role and manager
 
-Please see following link for a tutorial on how to add/delete/update using Employee Manager: 
+Please see following link for a tutorial on how to add/delete/update using Employee Manager: <a href="https://watch.screencastify.com/v/rPjwT8mzRCGEgUJ8CmSx" target="_blank">See Video</a>
 
 ## Links
 
