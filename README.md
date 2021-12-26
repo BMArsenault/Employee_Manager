@@ -42,3 +42,12 @@ And lastly, to view the entire budget according to departments select "View Budg
 Following the instruction above, select add/delete department, add/delete role or add/delete employee to update your company
 
 * Update employees role and manager
+
+Please see following link for a tutorial on how to add/delete/update using Employee Manager: 
+
+## Links
+
+* <a href="https://w3schools.com" target="_blank">Online Web Tutorials</a>
+* <a href="https://google.com" target="_blank">Google</a>
+* <a href="https://npmjs.com" target="_blank">NPM</a>
+* <a href="https://github.com/BMArsenault/Employee_Manager" target="_blank>Github</a>
